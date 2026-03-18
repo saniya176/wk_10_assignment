@@ -289,14 +289,17 @@ def delete_chat(chat_id: str) -> None:
             st.session_state.chat_created_at = time.time()
 
 
+memory_display = None
+
 with st.sidebar:
     st.header("Chats")
     with st.expander("User Memory", expanded=True):
-        st.json(st.session_state.user_memory)
+        memory_display = st.empty()
+        memory_display.json(st.session_state.user_memory)
         if st.button("Clear Memory"):
             st.session_state.user_memory = {}
             save_memory({})
-            st.rerun()
+            memory_display.json(st.session_state.user_memory)
 
     if st.button("New Chat"):
         create_new_chat()
@@ -378,5 +381,7 @@ if prompt:
                     st.session_state.user_memory, extracted
                 )
             save_memory(st.session_state.user_memory)
+            if memory_display is not None:
+                memory_display.json(st.session_state.user_memory)
     except Exception:
         pass
